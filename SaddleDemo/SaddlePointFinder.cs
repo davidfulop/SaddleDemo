@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text;
 
 namespace SaddleDemo
 {
@@ -6,10 +7,20 @@ namespace SaddleDemo
     {
         public string GetSaddlePoints(int[,] input)
         {
-            if (IsLargest(input.Cast<int>().Take(5).ToArray(), input[0, 0]) &&
-                IsSmallest(GetColumn(input, 0), input[0, 0]))
-                return "0,0";
-            return "No saddle points found.";
+            StringBuilder sb = new StringBuilder();
+
+            for (int y = 0; y < input.GetLength(1); y++)
+            {
+                for (int x = 0; x < input.GetLength(0); x++)
+                {
+                    if (IsLargest(input.Cast<int>().Skip(y*5).Take(5).ToArray(), input[y, x]) &&
+                        IsSmallest(GetColumn(input, x), input[y, x]))
+                        sb.AppendLine(y.ToString() + "," + x.ToString());
+                }
+            }
+
+            if (sb.Length == 0) sb.Append("No saddle points found.");
+            return sb.ToString().TrimEnd();
         }
 
         private bool IsLargest(int[] row, int item)
@@ -30,7 +41,7 @@ namespace SaddleDemo
         {
             int[] result = new int[mx.GetLength(1)];
             for (int x = 0; x < result.Length; x++)
-                result[x] = mx[columnIndex, x];
+                result[x] = mx[x, columnIndex];
             return result;
         }
     }
